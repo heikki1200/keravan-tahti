@@ -1,91 +1,43 @@
-import { For } from 'solid-js'
-import flattenDeep from 'lodash/flattenDeep'
-import uniqWith from 'lodash/uniqWith'
-import isEqual from 'lodash/isEqual'
-import find from 'lodash/find'
-import sample from 'lodash/sample'
-import { easystar, hqs, acceptableTiles } from './config'
-import {
-  position,
-  setPosition,
-  move,
-  setMove,
-  steps,
-  setSteps,
-  grid,
-  setGrid
-} from './signals'
+import { For, Show, createEffect } from 'solid-js'
+import { grid, gameState  } from './signals'
+import Spinner from './components/Spinner'
+import Modal from './components/Modal'
+import calculateMovement from './utils/calculateMovement'
+import checkTiles from './utils/checkTiles'
+import movePlayer from './utils/movePlayer'
+import initEasyStar from './utils/initEasyStar'
+import { state } from './store'
 
 const App = () => {
-  easystar.setGrid(grid())
-  easystar.setAcceptableTiles(acceptableTiles)
-  easystar.setIterationsPerCalculation(1000)
+  initEasyStar()
 
-  const calculateMovement = () => {
-    const availableTiles = []
-    setSteps(sample([2, 3, 4, 5, 6 ,7]))
-
-    hqs.map(x => {
-      easystar.findPath(position().x, position().y, x[0], x[1], path => {
-        if (path === null || !path.length) {
-          return
-        } else {
-          availableTiles.push(path.slice(0, steps()))
-          setMove(uniqWith(flattenDeep(availableTiles), isEqual))
-        }
-      })
-    })
-    easystar.calculate()
-  }
-
-  calculateMovement()
-
-  const checkMovement = (rowIndex, cellIndex) => {
-    const object = {
-      x: rowIndex,
-      y: cellIndex
+  createEffect(() => {
+    if (gameState() === 'move') {
+      calculateMovement()
     }
-
-    if (isEqual(object, position())) {
-      return 'current'
-    }
-
-    if (find(move(), object)) {
-      return 'move'
-    }
-  }
-
-  const movePlayer = (rowIndex, cellIndex, cellValue) => {
-    const object = {
-      x: rowIndex,
-      y: cellIndex
-    }
-
-    setPosition(object)
-    console.log(cellValue)
-    const updatedGrid = grid()
-    setGrid([])
-    updatedGrid[rowIndex][cellIndex] = 1
-    setGrid((updatedGrid))
-    calculateMovement()
-  }
+  })
 
   return (
     <main id="main">
       <h1>Keravan tähti</h1>
-      <p>Steps {steps() - 1}</p>
+      <p>Vuorossa: {state.players[state.currentPlayer].name}</p>
+      <Show when={gameState() === 'spin'}>
+        <Modal>
+          <Spinner />
+        </Modal>
+      </Show>
       <For each={grid()}>
         {(row, rowIndex) => (
           <div class="row">
             <For each={row}>
-              {(cell, cellIndex) => {
+              {(tile, tileIndex) => {
                 return (
                   <button
-                    disabled={cell === 0}
-                    class={checkMovement(rowIndex(), cellIndex())}
-                    onClick={() => movePlayer(rowIndex(), cellIndex(), cell)}
+                    disabled={tile === 0}
+                    class={`tile ${checkTiles(tileIndex(), rowIndex())}`}
+                    onClick={() => movePlayer(tileIndex(), rowIndex(), tile)}
                   >
-                    {cell}
+                    {tile}
                   </button>
                 )
               }}

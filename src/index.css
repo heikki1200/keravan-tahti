@@ -12,7 +12,7 @@ code {
     monospace;
 }
 
-button {
+.tile {
   pointer-events: none;
   display: inline-block;
   height: 20px;
@@ -21,16 +21,120 @@ button {
   border: 0;
 }
 
-button:disabled {
+.tile:disabled {
   opacity: 0;
 }
 
 .move {
   pointer-events: all;
   cursor: pointer;
-  background-color: aqua;
+  border: 1px solid red;
 }
 
 .current {
+  border: 1px solid red;
+}
+
+.modal-wrapper {
+  background-color: rgba(0, 0, 0, .5);
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+}
+
+.modal {
+  background-color: #FFF;
+  border-radius: 50%;
+  width: 500px;
+  height: 500px;
+  padding: 20px;
+  display: flex;
+}
+
+.bottle {
+  position: relative;
+  width: 25%;
+  z-index: 10;
+}
+
+.spinner {
+  position: relative;
+  text-align: center;
+  height: inherit;
+  width: inherit;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.actions {
+  position: absolute;
+  top: 110%;
+}
+
+.spinner--item {
+  clip-path: polygon(50% 0, 80% 0%, 50% 50%, 20% 0%);
+  border-radius: 50%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  padding-top: 30px;
+  color: white;
+  font-weight: bold;
+}
+
+.spinner--item__1 {
   background-color: red;
+  transform: rotate(30deg);
+}
+
+.spinner--item__2 {
+  background-color: green;
+  transform: rotate(90deg);
+}
+
+.spinner--item__3 {
+  background-color: blue;
+  transform: rotate(150deg);
+}
+
+.spinner--item__4 {
+  background-color: orange;
+  transform: rotate(210deg);
+}
+
+.spinner--item__5 {
+  background-color: blueviolet;
+  transform: rotate(270deg);
+}
+
+.spinner--item__6 {
+  background-color: brown;
+  transform: rotate(330deg);
+}
+
+.blur {
+  filter: blur(3px);
+}
+
+.green {
+  background-color: green;
+  color: white;
+}
+
+.purple {
+  background-color: purple;
+  color: white;
+}
+
+.blue {
+  background-color: blue;
+  color: white;
 }
